@@ -1,0 +1,191 @@
+:root {
+    --gray1: hsl(240, 10%, 10%);
+    --gray2: hsl(240, 10%, 20%);
+    --gray3: hsl(240, 10%, 30%);
+    --gray4: hsl(240, 10%, 40%);
+    --yellow: hsl(45, 80%, 58%);
+    --black: hsl(240, 10%, 0%);
+    --white: hsl(240, 10%, 100%);
+    --green: hsl(148, 59%, 55%);
+}
+
+@font-face {
+    font-family: "Alex";
+    src: url("../resources/fonts/Alex.ttf");
+}
+
+* {
+    color: var(--white);
+    font-family: sans-serif;
+
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--black);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#app {
+    height: 100vh;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#app > main {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ================================================================= */
+/* Custom tailwind */
+
+.flex-center {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.font-gigantic {
+    font-size: 10vw;
+}
+
+/* ================================================================= */
+/* Header */
+
+header {
+    background-color: var(--gray1);
+    height: 8vh;
+    width: 100vw;
+    padding-left: 3vw;
+    border-radius: 0px 0px 3vh 3vh;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header > h1.title {
+    font-size: large;
+    font-family: "Alex";
+}
+
+/* ================================================================= */
+/* Duotrigordle */
+
+section.duotrigordle {
+    overflow-y: auto;
+    height: 60vh;
+    width: 100vw;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 10px;
+}
+
+/* ================================================================= */
+/* Keyboard */
+
+div.keyboard-gui {
+    border-radius: 12px;
+    height: 30vh;
+    width: 50%;
+
+    gap: 5px;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+@media (width < 768px) {
+    div.keyboard-gui {
+        width: 100%;
+    }
+}
+
+div.keyboard-row {
+    height: 30%;
+    width: 100%;
+
+    gap: 5px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+}
+
+div.keyboard-row > button.key {
+    all: unset;
+
+    height: 100%;
+    width: 9%;
+
+    background-color: var(--gray4);
+    border-radius: 3px;
+
+    text-transform: capitalize;
+    font-size: 32px;
+}
+div.keyboard-row.r0 > button.key {
+    width: 10%;
+}
+
+div.keyboard-row > button.key.actionable {
+    /* 94% for 100 - gapWidth */
+    /* 7 * 9% for the 7 buttons of 9 width */
+    /* 2 for theres 2 action buttons */
+    /* TODO: MAKE THIS BETTER PLEASE :pray: :cry: :cry: :cry: */
+    width: calc((94% - (7 * 9%)) / 2) !important;
+}
+
+/* ================================================================= */
+/* Wordle part */
+div.wordle {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+div.wordle-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+div.letter-guess-container {
+    height: 16%;
+    aspect-ratio: 1 / 1;
+    
+    border-radius: 8px;
+    background-color: red;
+    
+    font-size: 24px;
+    text-transform: capitalize;
+    text-align: center;
+}
