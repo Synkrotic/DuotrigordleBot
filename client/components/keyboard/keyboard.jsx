@@ -1,7 +1,7 @@
 import { keyboardRows } from "./keys";
 import Key from "./keybutton";
 
-export default function Keyboard({ manager }) {
+export default function Keyboard({ keyboardManager }) {
     const rows = [keyboardRows.first, keyboardRows.second, keyboardRows.third];
 
     return (
@@ -9,7 +9,7 @@ export default function Keyboard({ manager }) {
             {rows.map((row, rowIndex) => (
                 <div className={`keyboard-row r${rowIndex}`} key={rowIndex}>
                     {row.map((key) => (
-                        <Key key={key} manager={manager}>{key}</Key>
+                        <Key key={key} keyboardManager={keyboardManager}>{key}</Key>
                     ))}
                 </div>
             ))}

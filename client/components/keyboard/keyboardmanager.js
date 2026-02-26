@@ -1,31 +1,28 @@
+import { isValidWord } from "../duotrigordle/WordManager";
 import { isValidKey, keyboardRows } from "./keys"; 
 
 export default class KeyBoardManager {
-    guesses;
+    setGuesses;
     setInputs;
+
+    guesses;
     inputs;
 
-    constructor(setInputs) {
+    constructor(setInputs, setGuesses) {
         this.setInputs = setInputs;
-        this.inputs = [];
+        this.setGuesses = setGuesses;
+
         this.guesses = [];
+        this.inputs = [];
     }
 
-    getInputs() {
-        return this.inputs;
-    }
-
-    getGuesses() {
-        return this.guesses;
-    }
-
-    onKeyPress = (key) => {
+    onKeyPress = async (key) => {
         switch (key) {
             case "backspace":
                 this.onBackspace();
                 break;
             case "enter":
-                this.onEnter();
+                await this.onEnter();
                 break;
             default:
                 if (this.inputs.length >= 5) return;
@@ -47,11 +44,18 @@ export default class KeyBoardManager {
         this.inputs.pop();
     }
 
-    onEnter = () => {
-        if (this.inputs.length != 5) return; 
+    onEnter = async () => {
+        if (this.inputs.length !== 5) {
+            return;
+        }
 
         const guess = this.inputs.join("");
+        
+        const valid = await isValidWord(guess);
+        if (!valid) return;
+
         this.guesses.push(guess);
+        this.setGuesses([...this.guesses]);
         this.inputs = [];
     }
 }

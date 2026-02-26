@@ -3,16 +3,16 @@ import { useEffect, useRef, useState } from "react";
 
 import { useDiscord } from "../discordContext";
 import Keyboard from "../components/keyboard/keyboard";
-import Duotrigordle from "../components/duotrigordle";
+import Duotrigordle from "../components/duotrigordle/duotrigordle";
 import LoadingPage from "./loading";
 import KeyBoardManager from "../components/keyboard/keyboardmanager";
 
 export default function App() {
     const { participants, ready } = useDiscord();
 	const [inputs, setInputs] = useState([]);
+	const [guesses, setGuesses] = useState([]);
 
-	const keyboardManager = useRef(new KeyBoardManager(setInputs));
-	const game = useRef(new Duotrigordle(keyboardManager.current));
+	const keyboardManager = useRef(new KeyBoardManager(setInputs, setGuesses));
 
 	useEffect(() => {
 		window.addEventListener("keydown", keyboardManager.current.onKeyPressEvent);
@@ -21,17 +21,21 @@ export default function App() {
 	}, [])
 
 
-
 	if (!ready) return <LoadingPage />;
     return (
         <>
 			<header>
 				<h2 className="title">Duotrigordle</h2>
-				<nav></nav>
+				<div>
+					<p>Guesses: {guesses.length}</p>
+				</div>
 			</header>
 			<main>
-				{ game.current.render() }
-				<Keyboard manager={keyboardManager.current} />
+				<Duotrigordle
+					inputs={inputs}
+					guesses={guesses}
+				/>
+				<Keyboard keyboardManager={keyboardManager.current} />
 			</main>
         </>
     );

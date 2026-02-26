@@ -17,6 +17,6 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
     },
-    allowedHosts: ['surge-shades-trackback-sensor.trycloudflare.com'],
+    allowedHosts: ['obviously-thousands-nation-mailed.trycloudflare.com'],
   },
 });
