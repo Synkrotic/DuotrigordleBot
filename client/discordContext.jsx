@@ -1,11 +1,11 @@
-// context/DiscordContext.jsx
-import { DiscordSDK } from "@discord/embedded-app-sdk";
+import { DiscordSDK, patchUrlMappings } from "@discord/embedded-app-sdk";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const DiscordContext = createContext(null);
 
 export function DiscordProvider({ children }) {
     const [participants, setParticipants] = useState([]);
+    const [self, setSelf] = useState(null);
     const [ready, setReady] = useState(false);
 
     const sdk = useMemo(() => {
@@ -13,6 +13,8 @@ export function DiscordProvider({ children }) {
     }, []);
 
     useEffect(() => {
+        patchUrlMappings([{ prefix: "/api", target: import.meta.env.API_IP}])
+
         async function setup() {
             try {
                 await sdk.ready();
@@ -31,7 +33,8 @@ export function DiscordProvider({ children }) {
                     body: JSON.stringify({ code }),
                 }).then(r => r.json());
 
-                await sdk.commands.authenticate({ access_token });
+                const { user } = await sdk.commands.authenticate({ access_token });
+                setSelf(user);
 
                 const { participants } = await sdk.commands.getInstanceConnectedParticipants();
                 setParticipants(participants);
@@ -47,10 +50,14 @@ export function DiscordProvider({ children }) {
         }
 
         setup();
+
+        return () => {
+            sdk.unsubscribe('ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE');
+        };
     }, [sdk]);
 
     return (
-        <DiscordContext.Provider value={{ sdk, participants, ready }}>
+        <DiscordContext.Provider value={{ sdk, self, participants, ready }}>
             {children}
         </DiscordContext.Provider>
     );

@@ -1,61 +1,40 @@
-import { isValidWord } from "../duotrigordle/WordManager";
-import { isValidKey, keyboardRows } from "./keys"; 
-
 export default class KeyBoardManager {
-    setGuesses;
-    setInputs;
-
-    guesses;
-    inputs;
-
-    constructor(setInputs, setGuesses) {
+    constructor(inputsRef, guessesRef, setInputs, setGuesses) {
+        this.inputs = inputsRef;
+        this.guesses = guessesRef;
         this.setInputs = setInputs;
         this.setGuesses = setGuesses;
-
-        this.guesses = [];
-        this.inputs = [];
     }
 
     onKeyPress = async (key) => {
         switch (key) {
             case "backspace":
-                this.onBackspace();
+                this.inputs.current.pop();
                 break;
             case "enter":
                 await this.onEnter();
                 break;
             default:
-                if (this.inputs.length >= 5) return;
-                this.inputs.push(key);
+                if (this.inputs.current.length >= 5) return;
+                this.inputs.current.push(key);
                 break;
         }
-
-        this.setInputs([...this.inputs])
-    }
-    onKeyPressEvent = (event) => {
-        const pressedKey = event.key.toLowerCase();
-
-        if (isValidKey(pressedKey)) {
-            this.onKeyPress(pressedKey);
-        }
-    }
-
-    onBackspace = () => {
-        this.inputs.pop();
+        this.setInputs([...this.inputs.current]);
     }
 
     onEnter = async () => {
-        if (this.inputs.length !== 5) {
-            return;
-        }
-
-        const guess = this.inputs.join("");
-        
+        if (this.inputs.current.length !== 5) return;
+        const guess = this.inputs.current.join("");
         const valid = await isValidWord(guess);
         if (!valid) return;
+        this.guesses.current.push(guess);
+        this.setGuesses([...this.guesses.current]);
+        this.inputs.current = [];
+        this.setInputs([]);
+    }
 
-        this.guesses.push(guess);
-        this.setGuesses([...this.guesses]);
-        this.inputs = [];
+    onKeyPressEvent = (event) => {
+        const pressedKey = event.key.toLowerCase();
+        if (isValidKey(pressedKey)) this.onKeyPress(pressedKey);
     }
 }

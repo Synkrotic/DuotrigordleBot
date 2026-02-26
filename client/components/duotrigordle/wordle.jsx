@@ -8,20 +8,21 @@ function LetterGuess({ children, color }) {
     );
 }
 
-export default function Wordle({ inputs, guesses, correctWord, index }) {
+export default function Wordle({ inputs, guesses, correctWord, index, setSolved }) {
     const [guessLock, setGuessLock] = useState(Infinity)
 
     useEffect(() => {
-        if (guesses.at(-1) === correctWord) {
+        if (guessLock === Infinity && guesses.at(-1) === correctWord) {
             setGuessLock(guesses.length)
+            setSolved(index)
         }
     }, [guesses])
 
     return (
         <div className="wordle">
-            <h3>Wordle {index}</h3>
+            <h3>Wordle {index + 1}</h3>
             {guesses.slice(0, guessLock).map((guess, i) => (
-                <div className="wordle-row">
+                <div key={i} className="wordle-row">
                     {
                         guess.split("").map((letter, j) => {
                             let color = "gray2";

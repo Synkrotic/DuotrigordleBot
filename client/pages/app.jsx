@@ -8,13 +8,23 @@ import LoadingPage from "./loading";
 import KeyBoardManager from "../components/keyboard/keyboardmanager";
 
 export default function App() {
-    const { participants, ready } = useDiscord();
+    const { ready } = useDiscord();
+
 	const [inputs, setInputs] = useState([]);
 	const [guesses, setGuesses] = useState([]);
+	const [solved, setSolved] = useState(new Set());
 
-	const keyboardManager = useRef(new KeyBoardManager(setInputs, setGuesses));
+	const inputsRef = useRef([]);
+	const guessesRef = useRef([]);
+	const keyboardManager = useRef(new KeyBoardManager(inputsRef, guessesRef, setInputs, setGuesses));
+
+
+	function addSolved(index) {
+		setSolved(new Set([...solved, index]))
+	}
 
 	useEffect(() => {
+		// Keyboard inputs
 		window.addEventListener("keydown", keyboardManager.current.onKeyPressEvent);
 
 		return () => window.removeEventListener("keydown", keyboardManager.current.onKeyPressEvent);
@@ -26,14 +36,17 @@ export default function App() {
         <>
 			<header>
 				<h2 className="title">Duotrigordle</h2>
-				<div>
+				<div className="flex-center gap20px">
 					<p>Guesses: {guesses.length}</p>
+					<p>Solved: {solved.size}/32</p>
 				</div>
 			</header>
 			<main>
 				<Duotrigordle
 					inputs={inputs}
 					guesses={guesses}
+					setGuesses={setGuesses}
+					setSolved={addSolved}
 				/>
 				<Keyboard keyboardManager={keyboardManager.current} />
 			</main>

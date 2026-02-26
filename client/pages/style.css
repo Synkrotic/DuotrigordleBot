@@ -65,6 +65,10 @@ body {
     align-items: center;
 }
 
+.gap20px {
+    gap: 20px;
+}
+
 .font-gigantic {
     font-size: 10vw;
 }
@@ -198,7 +202,7 @@ div.wordle-row {
 }
 
 div.letter-guess-container {
-    height: 10vh;
+    height: 4rem;
     aspect-ratio: 1 / 1;
     
     border-radius: 8px;
