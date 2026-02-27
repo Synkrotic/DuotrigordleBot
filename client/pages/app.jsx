@@ -45,6 +45,7 @@ export default function App() {
 				<Duotrigordle
 					inputs={inputs}
 					guesses={guesses}
+					guessesRef={guessesRef}
 					setGuesses={setGuesses}
 					setSolved={addSolved}
 				/>

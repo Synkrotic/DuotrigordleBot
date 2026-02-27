@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 
-function LetterGuess({ children, color }) {
+function LetterGuess({ children, color, className }) {
     return (
-        <div className={`letter-guess-container${color ? ` ${color}` : ""}`}>
+        <div className={
+            `letter-guess-container
+            ${color ? ` ${color}` : ""}
+            ${className ? ` ${className}` : ""}`
+        }>
             <p>{children}</p>
         </div>
     );
@@ -38,9 +42,22 @@ export default function Wordle({ inputs, guesses, correctWord, index, setSolved 
             {guessLock === Infinity && (
                 <div className="wordle-row">
                     {
-                        Array.from({ length: 5 }, (_, i) => (
-                            <LetterGuess key={i}>{inputs[i]}</LetterGuess>
-                        ))
+                        Array.from({ length: 5 }, (_, i) => {
+                            let correctGuess = null;
+                            for (const guess of guesses) {
+                                if (guess[i] === correctWord[i]) {
+                                    correctGuess = guess[i];
+                                    break;
+                                }
+                            }
+
+                            return <LetterGuess
+                                        className={(!inputs[i] && correctGuess) ? "preview" : ""}
+                                        key={i}
+                                   >
+                                       {inputs[i] || correctGuess}
+                                   </LetterGuess>;
+                        })
                     }
                 </div>
             )}

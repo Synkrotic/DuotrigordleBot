@@ -4,32 +4,44 @@ import { useDiscord } from "../../discordContext";
 import Wordle from "./wordle";
 
 
-export default function Duotrigordle({ inputs, guesses, setGuesses, setSolved }) {
+export default function Duotrigordle({ inputs, guesses, guessesRef, setGuesses, setSolved }) {
     const { self } = useDiscord();
     const [words, setWords] = useState([]);
-	const day = new Date().toISOString().split('T')[0];
+    const [firstLoad, setFirstLoad] = useState(false);
+	const day = new Date().toLocaleDateString('en-CA');
 	const userId = self.id;
 
     useEffect(() => {
         getTodaysWords().then(setWords);
     
+        console.log(new Date())
+        console.log(day)
+
 		// Get progress
-		fetch(`/api/progress/${userId}/${day}`, { method: "GET" }).then(res => {
-            const r = {"guesses":["chess", "guess", "pecan"]}
-			setGuesses(r.guesses)
-		});
+		fetch(`/api/progress/${userId}/${day}`, { method: "GET" })
+            .then(res => res.json())
+            .then(data => {
+                const loaded = data.guesses || [];
+                guessesRef.current = loaded;
+
+		    	setGuesses(data.guesses || []);
+                setFirstLoad(true);
+	    	}
+        );
     }, [])
 
     useEffect(() => {
+        if (!firstLoad) return;
+
         // Update progress
 		fetch(`/api/progress`, {
             method: "POST",
-            contentType: "application/json",
-            body: {
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 userId: userId,
                 day: day,
                 guesses: guesses 
-            }
+            })
         }).then(res => {
 			console.log(res)
 		});

@@ -3,6 +3,7 @@
     --gray2: hsl(240, 10%, 20%);
     --gray3: hsl(240, 10%, 30%);
     --gray4: hsl(240, 10%, 40%);
+    --gray6: hsl(240, 10%, 60%);
     --yellow: hsl(45, 80%, 58%);
     --black: hsl(240, 10%, 0%);
     --white: hsl(240, 10%, 100%);
@@ -145,9 +146,14 @@ div.keyboard-row > button.key {
 
     text-transform: capitalize;
     font-size: 32px;
+
+    transition: 0.1s;
 }
 div.keyboard-row.r0 > button.key {
     width: 10%;
+}
+div.keyboard-row > button.key:active {
+    transform: translateY(7px);
 }
 
 div.keyboard-row > button.key.actionable {
@@ -217,6 +223,15 @@ div.letter-guess-container {
         width: calc(20vw - 5px);
         aspect-ratio: 1 / 1;
     }
+}
+
+div.letter-guess-container.preview > * {
+    color: var(--gray6) !important;
+}
+div.letter-guess-container.gray4,
+div.letter-guess-container.green,
+div.letter-guess-container.yellow {
+    color: var(--white);
 }
 
 div.letter-guess-container.gray4 {

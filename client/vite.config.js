@@ -17,6 +17,6 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
     },
-    allowedHosts: ['node-campaigns-contrary-message.trycloudflare.com'],
+    allowedHosts: ['montana-christopher-disclaimer-mode.trycloudflare.com'],
   },
 });

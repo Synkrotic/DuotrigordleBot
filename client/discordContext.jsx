@@ -13,7 +13,7 @@ export function DiscordProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        patchUrlMappings([{ prefix: "/api", target: import.meta.env.API_IP}])
+        patchUrlMappings([{ prefix: "/api", target: import.meta.env.VITE_API_IP}])
 
         async function setup() {
             try {
