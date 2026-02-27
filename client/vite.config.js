@@ -17,6 +17,6 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
     },
-    allowedHosts: ['montana-christopher-disclaimer-mode.trycloudflare.com'],
+    allowedHosts: ['sega-cult-scout-cad.trycloudflare.com'],
   },
 });

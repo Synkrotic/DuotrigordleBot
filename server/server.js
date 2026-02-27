@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { Redis } from "@upstash/redis"
+import { generateProgressCard } from "./progressGenerator.js";
 dotenv.config({ path: "../.env" });
 
 const app = express();
@@ -12,7 +13,20 @@ const redis = new Redis({
 	token: process.env.REDIS_TOKEN
 });
 
-// Allow express to parse JSON bodies
+
+const progressCache = new Map();
+const MAX_CACHE_SIZE = 5;
+
+function cacheSet(key, value) {
+  // If already at limit, delete the oldest entry (first inserted)
+  if (progressCache.size >= MAX_CACHE_SIZE && !progressCache.has(key)) {
+    const oldestKey = progressCache.keys().next().value;
+    progressCache.delete(oldestKey);
+  }
+  progressCache.set(key, value);
+}
+
+
 app.use(express.json());
 
 app.post("/api/token", async (req, res) => {
@@ -34,19 +48,33 @@ app.post("/api/token", async (req, res) => {
 });
 
 app.post("/api/progress", async (req, res) => {
-	const { userId, day, guesses } = req.body
-	console.log(req.body)
+	console.log(req.body);
+	const { user, day, guesses, channelId } = req.body;
 
-	await redis.set(`${userId}:${day}`, JSON.stringify(guesses), { ex: 86400 })
-	res.json({ success: true })
+
+    // generateProgressCard();
+
+	const cacheKey = `${channelId}:${user.id}:${day}`;
+	cacheSet(cacheKey, guesses);
+	await redis.set(cacheKey, JSON.stringify(guesses), { ex: 86400 });
+
+	res.json({ success: true });
 });
 
+app.get('/api/progress/:userId/:day/:channelId', async (req, res) => {
+	const { userId, day, channelId } = req.params;
+	const cacheKey = `${channelId}:${userId}:${day}`;
 
-app.get('/api/progress/:userId/:day', async (req, res) => {
-	const { userId, day } = req.params
-	const data = await redis.get(`${userId}:${day}`)
-	res.json({ guesses: data ?? [] })
-})
+	if (progressCache.has(cacheKey)) {
+		console.log(`Cache hit for ${cacheKey}`);
+		return res.json({ guesses: progressCache.get(cacheKey) });
+	}
+
+	console.log(`Cache miss for ${cacheKey}, fetching from Redis`);
+	const data = await redis.get(cacheKey);
+	if (data) cacheSet(cacheKey, data);
+	res.json({ guesses: data ?? [] });
+});
 
 app.listen(port, () => {
 	console.log(`Server listening at http://localhost:${port}`);

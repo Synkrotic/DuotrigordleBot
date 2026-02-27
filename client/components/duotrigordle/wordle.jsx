@@ -16,9 +16,10 @@ export default function Wordle({ inputs, guesses, correctWord, index, setSolved 
     const [guessLock, setGuessLock] = useState(Infinity)
 
     useEffect(() => {
-        if (guessLock === Infinity && guesses.at(-1) === correctWord) {
-            setGuessLock(guesses.length)
-            setSolved(index)
+        if (guessLock === Infinity) {
+            if (guesses.includes(correctWord)) {
+                setSolved(index);
+            }
         }
     }, [guesses])
 

@@ -6,6 +6,7 @@ const DiscordContext = createContext(null);
 export function DiscordProvider({ children }) {
     const [participants, setParticipants] = useState([]);
     const [self, setSelf] = useState(null);
+    const [channel, setChannel] = useState(null);
     const [ready, setReady] = useState(false);
 
     const sdk = useMemo(() => {
@@ -24,7 +25,7 @@ export function DiscordProvider({ children }) {
                     response_type: "code",
                     state: "",
                     prompt: "none",
-                    scope: ["identify"],
+                    scope: ["identify, guilds"],
                 });
 
                 const { access_token } = await fetch("/api/token", {
@@ -35,6 +36,9 @@ export function DiscordProvider({ children }) {
 
                 const { user } = await sdk.commands.authenticate({ access_token });
                 setSelf(user);
+
+                const { channel } = await sdk.commands.getChannel({ channel_id: sdk.channelId })
+                setChannel(channel);
 
                 const { participants } = await sdk.commands.getInstanceConnectedParticipants();
                 setParticipants(participants);
@@ -57,7 +61,7 @@ export function DiscordProvider({ children }) {
     }, [sdk]);
 
     return (
-        <DiscordContext.Provider value={{ sdk, self, participants, ready }}>
+        <DiscordContext.Provider value={{ sdk, self, channel, participants, ready }}>
             {children}
         </DiscordContext.Provider>
     );

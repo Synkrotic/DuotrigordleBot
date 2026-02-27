@@ -4,21 +4,22 @@ import { useDiscord } from "../../discordContext";
 import Wordle from "./wordle";
 
 
-export default function Duotrigordle({ inputs, guesses, guessesRef, setGuesses, setSolved }) {
-    const { self } = useDiscord();
+export default function Duotrigordle({ inputs, guesses, solved, guessesRef, setGuesses, setSolved }) {
+    const { self, channel } = useDiscord();
     const [words, setWords] = useState([]);
     const [firstLoad, setFirstLoad] = useState(false);
 	const day = new Date().toLocaleDateString('en-CA');
 	const userId = self.id;
 
+    function getChannelProgress() {
+
+    }
+
     useEffect(() => {
         getTodaysWords().then(setWords);
     
-        console.log(new Date())
-        console.log(day)
-
 		// Get progress
-		fetch(`/api/progress/${userId}/${day}`, { method: "GET" })
+		fetch(`/api/progress/${userId}/${day}/${channel.id}`, { method: "GET" })
             .then(res => res.json())
             .then(data => {
                 const loaded = data.guesses || [];
@@ -33,14 +34,17 @@ export default function Duotrigordle({ inputs, guesses, guessesRef, setGuesses, 
     useEffect(() => {
         if (!firstLoad) return;
 
+
+
         // Update progress
 		fetch(`/api/progress`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                userId: userId,
+                user: self,
                 day: day,
-                guesses: guesses 
+                guesses: guesses,
+                channel: channel             
             })
         }).then(res => {
 			console.log(res)
